@@ -1,13 +1,9 @@
-"use client";
-import { Box, Heading, Button, Text } from '@chakra-ui/react';
+import React from 'react'
 
-export default function Home() {
+function page() {
   return (
-    <Box p={6}>
-      <Heading mb={4}>Welcome to Chakra UI with Next.js</Heading>
-      <Text mb={4}>This is your first Chakra-powered page!</Text>
-      <Button colorScheme="teal">Click Me</Button>
-    </Box>
-  );
+    <div>page</div>
+  )
 }
 
+export default page
