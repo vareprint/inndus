@@ -1,9 +1,11 @@
+'use client'
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ChakraProvider } from "@chakra-ui/react"; // ✅ Import ChakraProvider
 
 import ProviderStore from "./redux/ProviderStore";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,13 +25,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-    <body
-  className={`text-[20px] sm:text-[25px] md:text-[26px] lg:text-[28px] font-[Futura] ${geistSans.variable} ${geistMono.variable} antialiased`}
->
-      <ProviderStore>
-        {children}
-      </ProviderStore>
-    </body>
-  </html>
+      <body
+        className={`text-[20px] sm:text-[25px] md:text-[26px] lg:text-[28px] font-[Futura] ${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ChakraProvider>
+          <ProviderStore>
+            {children}
+          </ProviderStore>
+        </ChakraProvider>
+      </body>
+    </html>
   );
 }
