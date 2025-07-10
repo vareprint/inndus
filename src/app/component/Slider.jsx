@@ -49,7 +49,7 @@ function Slider() {
       </div>
 
       {/* 📝 Text Section */}
-      <div className="px-4 py-6 text-center text-sm sm:text-base md:text-lg leading-relaxed max-w-5xl mx-auto">
+      <div className="container px-5 py-6 text-center text-sm sm:text-base md:text-lg leading-relaxed max-w-5xl mx-auto">
         <p className="mb-4">
           At Inndus, we’re dedicated to delivering high-quality printing solutions tailored to meet the needs of businesses and individuals (www.vareprint.com) alike. Whether you’re looking for sleek business cards, eye-catching brochures, or large-scale banners, we bring your vision to life with precision, creativity, and attention to detail.
         </p>

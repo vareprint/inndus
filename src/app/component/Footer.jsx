@@ -4,26 +4,24 @@ import Link from 'next/link';
 
 function Footer() {
   return (
-   <div className='bg-[#1f4b59] text-white'>
-    <div className='container sm:block md:flex text-center gap-[21%] pt-4'>
+   
+      <div className="bg-[#1f4b59] text-white">
+    <div className='container sm:block md:flex justify-center gap-[50%]  pt-4'>
         <div>
            <p className='font-bold'> PRODUCTS</p> 
            <ul className='leading-[32px] text-sm'>
             <li><Link className='!text-white' href={'subproduct/1'}>BUSINESS STATIONERY</Link></li>
-            <li><Link className='!text-white' href={'subproduct/2'}>DECOR</Link></li>
-            <li><Link className='!text-white' href={'subproduct/3'}>EDUCATIONAL & PUBLISHING</Link></li>
+            <li><Link className='!text-white' href={'subproduct/5'}>MARKETING & PROMOTIONAL</Link></li>
             <li><Link className='!text-white' href={'subproduct/4'}>GIFTS & MERCHANDISE</Link></li>
+            <li><Link className='!text-white' href={'subproduct/2'}>DECOR</Link></li>
+            <li><Link className='!text-white' href={'subproduct/6'}>PACKAGING & LABELS</Link></li>
+
+            <li><Link className='!text-white' href={'subproduct/3'}>EDUCATIONAL & PUBLISHING</Link></li>
+
            </ul>
         </div>
 
-        <div>
-        <p> </p> 
-           <ul className='leading-[32px] text-sm'>
-            <li><Link className='!text-white' href={'subproduct/5'}>MARKETING & PROMOTIONAL</Link></li>
-            <li><Link className='!text-white' href={'subproduct/6'}>PACKAGING & LABELS</Link></li>
-            
-           </ul>
-        </div>
+        
 
 
         <div>

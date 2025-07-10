@@ -169,7 +169,7 @@ function SubproductPage() {
           <ul className="flex p-2 gap-[5px] text-sm bg-[#c1c6ca] whitespace-nowrap md:gap-[12px] md:text-md md:whitespace-normal">
             <li className='capitalize'><Link href="/" className="!text-black">Home</Link></li>
             <li>/</li>
-            <li className='capitalize'><Link href={`/subproduct/${filterProduct.pid}`} className="!text-black">{productName}</Link></li>
+            <li className='capitalize font-bold'><Link href={`/subproduct/${filterProduct.pid}`} className="!text-black">{productName}</Link></li>
             <li>/</li>
             <li className="font-bold capitalize">{filterProduct.sname}</li>
           </ul>
@@ -177,7 +177,7 @@ function SubproductPage() {
 
         {showSuccess && (
           <div className="bg-green-500 text-white text-center p-2 my-4 rounded">
-            🎉 Order placed successfully!
+            🎉 Enquiry Submitted successfully!
           </div>
         )}
 
@@ -216,7 +216,7 @@ function SubproductPage() {
 
 
             <div>
-              <label>Specification:</label>
+              <label><b>Specification:</b></label>
               <textarea
       ref={textareaRef}
       onInput={handleInput}
@@ -227,7 +227,7 @@ function SubproductPage() {
             </div>
 
             <div>
-              <label>Quantity:</label>
+              <label><b>Quantity:</b></label>
               <input
                 type="number"
                 value={quantity}
@@ -318,46 +318,56 @@ function SubproductPage() {
       </div>
 
       {showFormModal && (
-        <div className="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md relative">
-            <button
-              className="absolute top-2 right-2 text-xl text-gray-500"
-              onClick={() => setShowFormModal(false)}
-            >
-              &times;
-            </button>
-            <h2 className="text-center text-lg font-semibold mb-2">GET A QUOTE</h2>
-            <p className="text-center">We Will shortly contact you.</p>
-            <hr />
+  <div className="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md relative">
+      <button
+        className="absolute top-2 right-2 text-xl text-gray-500"
+        onClick={() => setShowFormModal(false)}
+      >
+        &times;
+      </button>
+      <h2 className="text-center text-lg font-semibold mb-2">GET A QUOTE</h2>
+      <p className="text-center">We will contact you shortly.</p>
+      <hr />
 
-            {['name', 'contact', 'email', 'remark'].map((field) => (
-              <div className="form-group mb-3" key={field}>
-                <label className="capitalize">{field}:</label>
-                {field === 'remark' ? (
-                  <textarea
-                    className="form-control"
-                    onChange={(e) => dispatch({ type: field, payload: e.target.value })}
-                  ></textarea>
-                ) : (
-                  <input
-                    type="text"
-                    name={field}
-                    className="form-control"
-                    onChange={(e) => dispatch({ type: field, payload: e.target.value })}
-                  />
-                )}
-              </div>
-            ))}
-
-            <button
-              className="bg-[#1f4b59] text-white p-2 mt-2 w-full"
-              onClick={handleSubmit}
-            >
-              SUBMIT
-            </button>
+      {/* HTML form with required fields */}
+      <form onSubmit={handleSubmit}>
+        {['name', 'contact', 'email', 'remark'].map((field) => (
+          <div className="form-group mb-3" key={field}>
+            <label className="capitalize">{field}:</label>
+            {field === 'remark' ? (
+              <textarea
+                className="form-control"
+                name={field}
+                required
+                onChange={(e) =>
+                  dispatch({ type: field, payload: e.target.value })
+                }
+              ></textarea>
+            ) : (
+              <input
+                type={field === 'email' ? 'email' : 'text'}
+                name={field}
+                className="form-control"
+                required
+                onChange={(e) =>
+                  dispatch({ type: field, payload: e.target.value })
+                }
+              />
+            )}
           </div>
-        </div>
-      )}
+        ))}
+
+        <button
+          type="submit"
+          className="bg-[#1f4b59] text-white p-2 mt-2 w-full"
+        >
+          SUBMIT
+        </button>
+      </form>
+    </div>
+  </div>
+)}
       <br />
       <Footer />
     </div>
