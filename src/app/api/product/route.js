@@ -8,7 +8,7 @@ export async function GET() {
     const connection = await getConnection();
 
     const [products] = await connection.query(`SELECT * FROM product ORDER BY seq ASC`);
-    const [subproducts] = await connection.query('SELECT * FROM sub_product');
+    const [subproducts] = await connection.query('SELECT * FROM sub_product ORDER BY seq ASC');
 
     return Response.json({
       products,
