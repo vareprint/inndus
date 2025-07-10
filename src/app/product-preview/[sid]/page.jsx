@@ -21,6 +21,8 @@ function SubproductPage() {
   const [parsedPrices, setParsedPrices] = useState({});
   const [selectedOptions, setSelectedOptions] = useState({});
   const [total, setTotal] = useState(0);
+  const [allProducts, setAllProducts] = useState([]);
+
   const [quantity, setQuantity] = useState(1);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const fileInputRef = useRef(null);
@@ -58,10 +60,13 @@ function SubproductPage() {
     }
   }, [sid, reduxSubproducts]);
 
+  
+
   useEffect(() => {
-    if (!filterProduct) return;
     const productData = localStorage.getItem('product');
     const parsed = productData ? JSON.parse(productData) : [];
+    setAllProducts(parsed);
+    if (!filterProduct) return;
     const matchedProduct = parsed.find((prod) => prod.pid == filterProduct.pid);
     setProductName(matchedProduct ? matchedProduct.pname : 'Product not found');
   }, [filterProduct]);
@@ -83,8 +88,8 @@ function SubproductPage() {
 
   const handleInput = () => {
     const el = textareaRef.current;
-    el.style.height = 'auto';              // Reset height
-    el.style.height = el.scrollHeight + 'px';  // Set to scroll height
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
   };
 
   const calculateTotal = (qty, options) => {
@@ -117,7 +122,9 @@ function SubproductPage() {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const formData = new FormData();
     formData.append('sid', filterProduct.sid);
     formData.append('sname', filterProduct.sname);
@@ -140,9 +147,17 @@ function SubproductPage() {
 
       if (res.data.success) {
         setShowSuccess(true);
-        setShowFormModal(false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => setShowSuccess(false), 3000);
+        setTimeout(() => {
+          setShowFormModal(false);
+          setShowSuccess(false);
+        }, 2000);
+
+        // Optionally clear form and files
+        dispatch({ type: 'name', payload: '' });
+        dispatch({ type: 'contact', payload: '' });
+        dispatch({ type: 'email', payload: '' });
+        dispatch({ type: 'remark', payload: '' });
+        setUploadedFiles([]);
       } else {
         alert(res.data.message || 'Failed to submit');
       }
@@ -167,9 +182,28 @@ function SubproductPage() {
       <div className="container">
         <div className="mt-4">
           <ul className="flex p-2 gap-[5px] text-sm bg-[#c1c6ca] whitespace-nowrap md:gap-[12px] md:text-md md:whitespace-normal">
-            <li className='capitalize'><Link href="/" className="!text-black">Home</Link></li>
+            <li className="capitalize">
+              <Link href="/" className="!text-black">Home</Link>
+            </li>
             <li>/</li>
-            <li className='capitalize font-bold'><Link href={`/subproduct/${filterProduct.pid}`} className="!text-black">{productName}</Link></li>
+            <li className="capitalize font-bold relative group cursor-pointer">
+              <Link href={`/subproduct/${filterProduct.pid}`} className="!text-black">
+                {productName}
+              </Link>
+              <ul className="absolute left-0 mt-1 bg-white border shadow-md rounded hidden group-hover:block z-50 w-max max-h-[200px] overflow-auto">
+                {allProducts
+                  .filter((p) => p.pid != filterProduct.pid)
+                  .map((p) => (
+                    <li key={p.pid} className="px-3 py-1 hover:bg-gray-100 capitalize">
+                      <Link href={`/subproduct/${p.pid}`} className="!text-black block">
+                        {p.pname}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </li>
+
+            
             <li>/</li>
             <li className="font-bold capitalize">{filterProduct.sname}</li>
           </ul>
@@ -199,31 +233,15 @@ function SubproductPage() {
             <hr className="border-b-2 border-gray-500" />
             <p className="text-[14px] leading-[22px]">{filterProduct.sdesc}</p>
 
-            {/* {Object.entries(parsedPrices).map(([category, options]) => (
-              <div key={category} className="mb-3">
-                <label className="capitalize font-semibold">{category}</label>
-                <select
-                  className="form-control !w-[70%] mt-1"
-                  onChange={(e) => handleOptionChange(category, e.target.value)}
-                >
-                  <option value="">Select {category}</option>
-                  {Object.entries(options).map(([label, value]) => (
-                    <option key={label} value={label}>{label} ({value})</option>
-                  ))}
-                </select>
-              </div>
-            ))} */}
-
-
             <div>
               <label><b>Specification:</b></label>
               <textarea
-      ref={textareaRef}
-      onInput={handleInput}
-      className="form-control mb-2 resize-none min-h-[80px] max-h-[300px] overflow-hidden w-full p-2 rounded border border-gray-300"
-      placeholder="Add specifications like size, paper, lamination..."
-      rows={1}
-    />
+                ref={textareaRef}
+                onInput={handleInput}
+                className="form-control mb-2 resize-none min-h-[80px] max-h-[300px] overflow-hidden w-full p-2 rounded border border-gray-300"
+                placeholder="Add specifications like size, paper, lamination..."
+                rows={1}
+              />
             </div>
 
             <div>
@@ -239,70 +257,64 @@ function SubproductPage() {
 
             <hr />
 
-
             {uploadedFiles.length > 0 && (
-  <>
-    <div className="grid grid-cols-3 gap-2 mt-3 mb-2">
-      {uploadedFiles.map((file, index) => (
-        <div key={index} className="relative border p-1 rounded">
-          {file.type.startsWith('image/') ? (
-            <img
-              src={URL.createObjectURL(file)}
-              alt={`Preview ${index}`}
-              className="h-24 w-full object-cover rounded"
+              <>
+                <div className="grid grid-cols-3 gap-2 mt-3 mb-2">
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} className="relative border p-1 rounded">
+                      {file.type.startsWith('image/') ? (
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${index}`}
+                          className="h-24 w-full object-cover rounded"
+                        />
+                      ) : (
+                        <p className="text-sm text-center">{file.name}</p>
+                      )}
+                      <button
+                        type="button"
+                        className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="text-left mb-3">
+                  <button
+                    className="text-black-600 underline"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    + Upload More Design
+                  </button>
+                </div>
+              </>
+            )}
+
+            {uploadedFiles.length === 0 && (
+              <div
+                className="!w-[70%] p-2 text-center justify-center border border-gray-400 mb-3 cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Image src={`/upload_update.svg`} alt="upload-image" width={200} height={100} />
+                <p className="font-bold text-left mt-2">Upload a full design</p>
+                <ul className="leading-[30px] text-left">
+                  <li>✶ Have a complete design</li>
+                  <li>✶ Have your own designer</li>
+                </ul>
+              </div>
+            )}
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileUpload}
+              accept="image/*,.pdf"
+              multiple
             />
-          ) : (
-            <p className="text-sm text-center">{file.name}</p>
-          )}
-          <button
-            type="button"
-            className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
-            onClick={() => handleRemoveImage(index)}
-          >
-            &times;
-          </button>
-        </div>
-      ))}
-    </div>
-
-    {/* Upload More Button */}
-    <div className="text-left mb-3">
-      <button
-        className="text-black-600 underline"
-        onClick={() => fileInputRef.current?.click()}
-      >
-        + Upload More Design
-      </button>
-    </div>
-  </>
-)}
-
-{/* Upload Design Box (Only when no file uploaded) */}
-{uploadedFiles.length === 0 && (
-  <div
-    className="!w-[70%] p-2 text-center justify-center border border-gray-400 mb-3 cursor-pointer"
-    onClick={() => fileInputRef.current?.click()}
-  >
-    <Image src={`/upload_update.svg`} alt="upload-image" width={200} height={100} />
-    <p className="font-bold text-left mt-2">Upload a full design</p>
-    <ul className="leading-[30px] text-left">
-      <li>✶ Have a complete design</li>
-      <li>✶ Have your own designer</li>
-    </ul>
-  </div>
-)}
-
-{/* Hidden File Input */}
-<input
-  type="file"
-  ref={fileInputRef}
-  style={{ display: 'none' }}
-  onChange={handleFileUpload}
-  accept="image/*,.pdf"
-  multiple
-/>
-
-          
 
             <button
               className="bg-[#1f4b59] text-white p-2 mt-4"
@@ -318,60 +330,59 @@ function SubproductPage() {
       </div>
 
       {showFormModal && (
-  <div className="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md relative">
-      <button
-        className="absolute top-2 right-2 text-xl text-gray-500"
-        onClick={() => setShowFormModal(false)}
-      >
-        &times;
-      </button>
-      <h2 className="text-center text-lg font-semibold mb-2">GET A QUOTE</h2>
-      <p className="text-center">We will contact you shortly.</p>
-      <hr />
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-10 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md relative">
+            <button
+              className="absolute top-2 right-2 text-xl text-gray-500"
+              onClick={() => setShowFormModal(false)}
+            >
+              &times;
+            </button>
+            <h2 className="text-center text-lg font-semibold mb-2">GET A QUOTE</h2>
+            <p className="text-center">We will contact you shortly.</p>
+            <hr />
 
-      {/* HTML form with required fields */}
-      <form onSubmit={handleSubmit}>
-        {['name', 'contact', 'email', 'remark'].map((field) => (
-          <div className="form-group mb-3" key={field}>
-            <label className="capitalize">{field}:</label>
-            {field === 'remark' ? (
-              <textarea
-                className="form-control"
-                name={field}
-                required
-                onChange={(e) =>
-                  dispatch({ type: field, payload: e.target.value })
-                }
-              ></textarea>
-            ) : (
-              <input
-                type={field === 'email' ? 'email' : 'text'}
-                name={field}
-                className="form-control"
-                required
-                onChange={(e) =>
-                  dispatch({ type: field, payload: e.target.value })
-                }
-              />
+            {showSuccess && (
+              <div className="bg-green-100 text-green-800 border border-green-300 text-sm p-2 rounded my-3">
+                ✅ Enquiry submitted successfully!
+              </div>
             )}
-          </div>
-        ))}
 
-        <button
-          type="submit"
-          className="bg-[#1f4b59] text-white p-2 mt-2 w-full"
-        >
-          SUBMIT
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+            <form onSubmit={handleSubmit}>
+              {['name', 'contact', 'email', 'remark'].map((field) => (
+                <div className="form-group mb-3" key={field}>
+                  <label className="capitalize">{field}:</label>
+                  {field === 'remark' ? (
+                    <textarea
+                      className="form-control"
+                      name={field}
+                      required
+                      value={formState[field]}
+                      onChange={(e) => dispatch({ type: field, payload: e.target.value })}
+                    ></textarea>
+                  ) : (
+                    <input
+                      type={field === 'email' ? 'email' : 'text'}
+                      name={field}
+                      className="form-control"
+                      required
+                      value={formState[field]}
+                      onChange={(e) => dispatch({ type: field, payload: e.target.value })}
+                    />
+                  )}
+                </div>
+              ))}
+              <button type="submit" className="bg-[#1f4b59] text-white p-2 mt-2 w-full">
+                SUBMIT
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <br />
       <Footer />
     </div>
-
   );
 }
 

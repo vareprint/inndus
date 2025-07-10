@@ -10,45 +10,39 @@ function Slider() {
     "/image/slider/B4.webp",
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [index, setIndex] = useState(0);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+  const next = () => setIndex((i) => (i + 1) % images.length);
+  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
 
   return (
-    <>
-      {/* 🔄 Slider Container */}
-      <div className="relative w-full aspect-[16/5] overflow-hidden">
+    <div>
+      {/* Image Slider */}
+      <div className="relative w-full overflow-hidden">
         <Image
-          src={images[currentIndex]}
-          alt={`Slide ${currentIndex}`}
-          fill
-          className="object-contain transition-opacity duration-500"
+          src={images[index]}
+          alt="Slider"
+          width={1600}
+          height={500}
+          className="w-full h-auto object-cover"
           sizes="100vw"
           priority
         />
-
-        {/* ◀ Controls ▶ */}
         <button
-          onClick={prevSlide}
-          className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-10"
+          onClick={prev}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-2 py-1 rounded"
         >
           ◀
         </button>
         <button
-          onClick={nextSlide}
-          className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-10"
+          onClick={next}
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-2 py-1 rounded"
         >
           ▶
         </button>
       </div>
 
-      {/* 📝 Text Section */}
+      {/* Description Text */}
       <div className="container px-5 py-6 text-center text-sm sm:text-base md:text-lg leading-relaxed max-w-5xl mx-auto">
         <p className="mb-4">
           At Inndus, we’re dedicated to delivering high-quality printing solutions tailored to meet the needs of businesses and individuals (www.vareprint.com) alike. Whether you’re looking for sleek business cards, eye-catching brochures, or large-scale banners, we bring your vision to life with precision, creativity, and attention to detail.
@@ -60,7 +54,7 @@ function Slider() {
           Explore our services today and discover why businesses trust Inndus for all their printing needs. Let’s create something extraordinary together.
         </p>
       </div>
-    </>
+    </div>
   );
 }
 

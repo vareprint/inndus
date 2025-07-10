@@ -11,16 +11,23 @@ import Footer from '@/app/component/Footer';
 function Subproduct() {
   const { pid } = useParams();
   const [productName, setProductName] = useState('');
+  const [otherProducts, setOtherProducts] = useState([]);
   const reduxSubproducts = useSelector((state) => state.subproduct.subproduct);
   const [filteredSubproducts, setFilteredSubproducts] = useState([]);
 
   useEffect(() => {
     const productData = localStorage.getItem('product');
     const parsed = productData ? JSON.parse(productData) : [];
+
+    // Find and set current product
     const matchedProduct = parsed.find((prod) => prod.pid == pid);
-    const productName = matchedProduct ? matchedProduct.pname : 'Product not found';
-    setProductName(productName);
-  }, []);
+    const currentProductName = matchedProduct ? matchedProduct.pname : 'Product not found';
+    setProductName(currentProductName);
+
+    // Set other product names excluding current
+    const others = parsed.filter((prod) => prod.pid != pid);
+    setOtherProducts(others);
+  }, [pid]);
 
   useEffect(() => {
     let sourceSubproducts = reduxSubproducts;
@@ -45,14 +52,26 @@ function Subproduct() {
         <div className="container">
           {/* Breadcrumb */}
           <div className="mt-4">
-            <ul className="p-2 flex gap-[12px] bg-[#c1c6ca] whitespace-nowrap text-sm sm:text-base md:text-md">
+            <ul className="p-2 flex gap-[12px] bg-[#c1c6ca] whitespace-nowrap text-sm sm:text-base md:text-md relative">
               <li>
-                <Link href="/" className="!text-black">
-                  Home
-                </Link>
+                <Link href="/" className="!text-black">Home</Link>
               </li>
               <li>/</li>
-              <li className="font-bold">{productName}</li>
+              {/* Hover Dropdown for Other Products */}
+              <li className="relative group font-bold cursor-pointer">
+                {productName}
+                {otherProducts.length > 0 && (
+                  <ul className="absolute left-0 mt-1 w-max bg-white border shadow-lg rounded hidden group-hover:block z-50">
+                    {otherProducts.map((prod) => (
+                      <li key={prod.pid} className="px-3 py-1 hover:bg-gray-100 capitalize">
+                        <Link href={`/subproduct/${prod.pid}`} className="!text-black block">
+                          {prod.pname}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
             </ul>
           </div>
 
