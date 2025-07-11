@@ -13,7 +13,7 @@ function Admin() {
     e.preventDefault();
     if(user=='Admin' && password=="123"){
       localStorage.setItem("AdminUser", user);
-      router.push('/admin/product');
+      router.push('/admin/AdminProduct');
     }else{
       setError("Something went wrong")
     }

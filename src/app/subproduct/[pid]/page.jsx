@@ -4,42 +4,42 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import Header from '@/app/component/Header';
+import Footer from '@/app/component/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
-import Footer from '@/app/component/Footer';
 
 function Subproduct() {
   const { pid } = useParams();
   const [productName, setProductName] = useState('');
   const [otherProducts, setOtherProducts] = useState([]);
-  const reduxSubproducts = useSelector((state) => state.subproduct.subproduct);
   const [filteredSubproducts, setFilteredSubproducts] = useState([]);
+  const reduxSubproducts = useSelector((state) => state.subproduct.subproduct);
 
+  // Load current product name and other product links
   useEffect(() => {
     const productData = localStorage.getItem('product');
-    const parsed = productData ? JSON.parse(productData) : [];
+    const products = productData ? JSON.parse(productData) : [];
 
-    // Find and set current product
-    const matchedProduct = parsed.find((prod) => prod.pid == pid);
-    const currentProductName = matchedProduct ? matchedProduct.pname : 'Product not found';
-    setProductName(currentProductName);
+    const current = products.find((prod) => prod.pid == pid);
+    setProductName(current ? current.pname : 'Product Not Found');
 
-    // Set other product names excluding current
-    const others = parsed.filter((prod) => prod.pid != pid);
+    const others = products.filter((prod) => prod.pid != pid);
     setOtherProducts(others);
   }, [pid]);
 
+  // Filter subproducts by pid and sort by seq
   useEffect(() => {
-    let sourceSubproducts = reduxSubproducts;
+    let subproducts = reduxSubproducts;
 
     if (!reduxSubproducts || reduxSubproducts.length === 0) {
-      const localData = localStorage.getItem('subproduct');
-      if (localData) {
-        sourceSubproducts = JSON.parse(localData);
-      }
+      const localSub = localStorage.getItem('subproduct');
+      if (localSub) subproducts = JSON.parse(localSub);
     }
 
-    const filtered = sourceSubproducts.filter((item) => item.pid == pid);
+    const filtered = subproducts
+      .filter((item) => item.pid == pid)
+      .sort((a, b) => a.seq - b.seq);
+
     setFilteredSubproducts(filtered);
     localStorage.setItem('filteredSubproducts', JSON.stringify(filtered));
   }, [reduxSubproducts, pid]);
@@ -52,12 +52,9 @@ function Subproduct() {
         <div className="container">
           {/* Breadcrumb */}
           <div className="mt-4">
-            <ul className="p-2 flex gap-[12px] bg-[#c1c6ca] whitespace-nowrap text-sm sm:text-base md:text-md relative">
-              <li>
-                <Link href="/" className="!text-black">Home</Link>
-              </li>
+            <ul className="p-2 flex gap-3 bg-[#c1c6ca] text-sm md:text-base relative">
+              <li><Link href="/" className="!text-black">Home</Link></li>
               <li>/</li>
-              {/* Hover Dropdown for Other Products */}
               <li className="relative group font-bold cursor-pointer">
                 {productName}
                 {otherProducts.length > 0 && (
@@ -79,7 +76,7 @@ function Subproduct() {
           <div className="row mt-4">
             {filteredSubproducts.length > 0 ? (
               filteredSubproducts.map((item, index) => (
-                <div className="col-sm-3 mb-3" key={index}>
+                <div className="col-sm-3 mb-4" key={index}>
                   <div className="text-center">
                     <Link href={`/product-preview/${item.sid}`}>
                       <Image
@@ -92,15 +89,15 @@ function Subproduct() {
                         loading="lazy"
                         className="rounded-md object-cover transition duration-300 hover:scale-105"
                       />
-                      <p className="mb-2 text-left text-black mt-2 capitalize">{item.sname}</p>
+                      <p className="mt-2 mb-2 text-left text-black capitalize">{item.sname}</p>
                     </Link>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="w-full text-center justify-center text-gray-500 mt-4">
+              <div className="col-12 text-center text-gray-500 mt-4">
                 No subproducts found.
-              </p>
+              </div>
             )}
           </div>
         </div>
