@@ -247,10 +247,10 @@ function SubproductPage() {
             <div>
               <label><b>Quantity:</b></label>
               <input
-                type="number"
+                type="text"
                 value={quantity}
                 onChange={handleQuantity}
-                className="form-control !w-[70%] mt-1 mb-2"
+                className="form-control !w-[50%] mt-1 mb-2"
                 min={1}
               />
             </div>
@@ -295,7 +295,7 @@ function SubproductPage() {
 
             {uploadedFiles.length === 0 && (
               <div
-                className="!w-[70%] p-2 text-center justify-center border border-gray-400 mb-3 cursor-pointer"
+                className="!w-[50%] p-2 text-center justify-center border border-gray-400 mb-3 cursor-pointer"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Image src={`/upload_update.svg`} alt="upload-image" width={200} height={100} />
