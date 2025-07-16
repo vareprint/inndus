@@ -45,24 +45,50 @@ export async function POST(req) {
       },
     });
 
-    // Email body
     const htmlBody = `
-      <h3>New Order Received</h3>
-      <p><strong>SID:</strong> ${sid}</p>
-      <p><strong>SName:</strong> ${sname}</p>
-      <p><strong>Price:</strong> ${price}</p>
-      <p><strong>Quantity:</strong> ${quantity}</p>
-      <p><strong>Options:</strong> ${options}</p>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Contact:</strong> ${contact}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Remark:</strong> ${remark}</p>
-    `;
-
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+      <h2 style="color: #2c3e50;">🛒 New Enquiry Received</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Product Id:</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${sid}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Product Name:</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${sname}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Name</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${name}</td>
+        </tr>
+       
+         <tr>
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Contact</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${contact}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Email</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${email}</td>
+        </tr>
+        <tr>
+       
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Quantity</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${quantity}</td>
+        </tr>
+       
+        
+          <td style="padding: 8px; border: 1px solid #eee;"><strong>Remark</strong></td>
+          <td style="padding: 8px; border: 1px solid #eee;">${remark}</td>
+        </tr>
+      </table>
+      <p style="margin-top: 20px; color: #888; font-size: 14px;">This is an automated email generated from your order system.</p>
+    </div>
+  `;
     // Send email
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
+      to: email,
+      cc: process.env.EMAIL_USER,
       subject: 'New Order Submitted',
       html: htmlBody,
       attachments,
